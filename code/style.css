@@ -9,17 +9,52 @@ h1{
     color: #75B79E;
     font-size: 56px;
     line-height: 65.63px;
+    text-align: center;
+    width: 70%;
+    margin: 0px auto;
 }
 img{
     width: 100%;
 }
 
+header{
+    display: flex;
+    justify-content: center;  
+    margin: 10px 0px;
+}
+
+header > div{
+    position: relative;
+    max-width: 1000px;
+    width:100%;
+}
+
+.counter{
+    position: absolute;
+    top:15px;right: 5%;
+    color: #619e87;
+    border: 3px solid;
+    border-radius: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.counter h2, .counter p{
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+}
+
 /*----------Cards Configuraion--------------*/
+
 ul{
     display: flex;
     align-items: center;
     justify-content: space-around;
     flex-wrap: wrap;
+    flex-direction: row;
+    max-width: 1000px;
+    margin: 0px auto;
 }
 li{
     position: relative;
@@ -35,18 +70,63 @@ li{
     background-color: #A7E9AF;
     backface-visibility: hidden;
     transition: all .5s;
-    transform-style: preserve-3d;
     border: 1px solid #99CEA8;
+    display: flex;
+    align-items: center;
 }
 .back-face {
     transform: rotateY(180deg);
 }
 
-/*JavaScript*/
+
+/*---------JavaScript---------*/
+
 
 .turned .back-face {
     transform: rotateY(0deg);
 }
 .turned .front-face {
     transform: rotateY(-180deg);
+}
+.hidden{
+    display: none;
+}
+
+
+
+/*---------------Responsivity--------------*/
+
+@media (max-width:450px){
+    ul{
+        flex-direction: column;
+    }
+    li{
+        margin: 17px 0px;
+    }
+    h1{
+        font-size: 36px;
+        line-height: 42.2px;
+        width: 100%;
+    }
+    .counter{
+        position: fixed;
+        top:15px;right: 5px;
+    }
+}
+
+@media (max-width:630px){
+    .counter{
+        top:85px;
+    }
+}
+
+@media (max-width:528px){
+    .counter{
+        top:15px;
+    }
+}
+@media (max-width:501px){
+    .counter{
+        top:85px;
+    }
 }

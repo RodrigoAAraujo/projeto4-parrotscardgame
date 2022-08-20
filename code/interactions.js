@@ -1,13 +1,38 @@
-const cardsList = []
+/*-----------Game Setup Variables-------------*/
 let cards = 0;
+let cardsList = []
+let cardsChosenList = []
+let animation = 0;
+let counter = 0;
+let cardTurnedinGame =0
+let board  = document.querySelector("ul")
+const counterBlock = document.querySelector(".counter")
+const number = document.querySelector(".counter p ")
+const counterId= setInterval(counterUp,1000)
 
-function chooseCards(){
-    while(true){
-        cards = prompt("Com quantas carta vc quer jogar?")
-        if (cards > 3 && cards < 15  && cards%2 == 0){
-            break
-        }
-    }
+
+
+let record = Infinity
+
+/*-----------Game Behaviors Variables---------*/
+let FirstCard = false
+let FirstCardChosen = ""
+let SecondCardChosen = ""
+
+/*-------------Pre functions------------*/
+function reset(){
+    cards = 0;
+    cardsList = []
+    cardsChosenList = []
+    animation = 0;
+    counter = 0;
+    cardTurnedinGame =0
+    board.innerHTML =""
+    counterBlock.classList.add("hidden")
+}
+
+function animationFinished(){
+    animation = 0;
 }
 
 function getRandomInt(min, max) {
@@ -16,7 +41,36 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function SortingCards(){
+function guessFail(){
+    cardsChosenList.pop()
+    cardsChosenList.pop()
+    
+    SecondCardChosen.classList.remove("turned")
+    FirstCardChosen.classList.remove("turned")
+}
+
+function turnCards(){
+    let childNodes = document.querySelectorAll("li")
+    childNodes.forEach(element => {element.classList.add("turned")});
+}
+
+function ReturnCards(){
+    let childNodes = document.querySelectorAll("li")
+    childNodes.forEach(element => {element.classList.remove("turned")});
+}
+/*------------Base functions-------------*/
+
+function chooseCards(){
+    while(true){
+        cards = prompt("Com quantas carta vc quer jogar?")
+        if (cards > 3 && cards < 15  && cards%2 == 0){
+            break
+        }
+    }
+    sortingCards()
+}
+
+function sortingCards(){
     let cardsPossible = ["bobrossparrot","explodyparrot", "fiestaparrot", "metalparrot", "revertitparrot","tripletsparrot", "unicornparrot"]
 
     for(let i = 0; i < cards/2 ; i++){
@@ -32,11 +86,11 @@ function SortingCards(){
         cardsPossible[cardsPossible.length-1] = temp
         cardsPossible.pop()
     }
+    mountingCards()
 }
 
-function MountingCards(){
+function mountingCards(){
     let randomizerExtriction = cardsList.length
-    let board  = document.querySelector("ul")
 
     for(let i = 0; i < cards; i++){
 
@@ -57,17 +111,95 @@ function MountingCards(){
         cardsList[random] = cardsList[cardsList.length-1]
         cardsList[cardsList.length-1] = temp
         cardsList.pop()
-
-
     }
-
+    showingCards()
 }
 
+function showingCards(){
+    animation=1    
+    setTimeout(turnCards, 100)
+    setTimeout(ReturnCards, 2500)
+    setTimeout(animationFinished,3000)
+    setTimeout(startCounter,3000)
+}
+
+function startCounter(){
+    counter =0
+    number.innerHTML = counter
+    counterBlock.classList.remove("hidden")
+}
+
+function counterUp(){    
+    counter ++
+    number.innerHTML = counter
+}
+
+/*-----------In Game functions------------ */
+
 function turnCard(cardChosen){
-    cardChosen.classList.add("turned")
+
+    if (animation ==0 && !FirstCard && !cardChosen.classList.contains("turned")){
+        animation = 1
+        cardChosen.classList.add("turned")
+        setTimeout(animationFinished, 20)
+        let type = cardChosen.querySelector(".back-face img")
+        cardsChosenList.push(type.src)
+        
+
+        FirstCard = true
+        FirstCardChosen = cardChosen
+        cardTurnedinGame++
+    }
+
+    if (animation==0 && FirstCard && !cardChosen.classList.contains("turned")){
+        animation = 1
+        cardChosen.classList.add("turned")
+        setTimeout(animationFinished, 1000)
+        let type = cardChosen.querySelector(".back-face img")
+        cardsChosenList.push(type.src)
+
+        SecondCardChosen = cardChosen
+
+        for(n=0; n <cardsChosenList.length; n+=2){
+            m = n +1
+            if (cardsChosenList[n] !== cardsChosenList[m] && cardsChosenList[m] !== null){
+                setTimeout(guessFail, 1000)
+            }
+        }
+
+        FirstCard = false
+        cardTurnedinGame++
+
+        if (cards == cardsChosenList.length){
+            setTimeout(endGame,600)
+        }
+    }
+}
+
+function endGame(){
+    animation = 1
+    newRecord = cardTurnedinGame
+    if (newRecord<record){
+        record = newRecord
+    }
+    alert(`Você ganhou em ${cardTurnedinGame} jogadas e ${counter} segundos.\n Seu Recorde: ${record} jogadas.`)
+
+    while(true){
+        let answer = prompt("Gostaria de reiniciar a partida? (escreva sim ou não)")
+        if(answer.toLowerCase() == "sim"){
+            reset()
+            chooseCards()
+            break
+        }else if(answer.toLowerCase() == "não"){
+            alert(`Recorde: ${record} jogadas.`)
+        }else{
+            alert("Não é uma resposta válida.")
+        }
+    }
     
 }
 
 chooseCards()
-SortingCards()
-MountingCards()
+
+
+
